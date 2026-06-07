@@ -1,0 +1,14 @@
+.env
+.env.local
+
+n8n_data/
+postgres_data/
+data/
+files/
+pdf/
+
+*.sqlite
+*.log
+
+.DS_Store
+node_modules/

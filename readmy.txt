@@ -1,0 +1,31 @@
+#Проверка
+docker compose ps
+
+#Вход в базу
+docker exec -it healty_postgres psql -U healty_user -d healty_support
+
+
+#Проверить таблици
+
+\dt
+
+#Выйти
+
+\q
+
+#посмотреть тунель для clodflare
+
+docker logs -f cloudflared
+
+#Посмотреть переменные из области видимости
+grep -v '^#' .env | grep -v '^$'
+
+#В самом Docker
+docker compose config
+
+
+#Обновление N8N полсе изменения вебхука
+docker compose up -d --force-recreate n8n
+docker exec -it healty_n8n env | grep -E "N8N_HOST|WEBHOOK_URL|N8N_EDITOR_BASE_URL|N8N_PROTOCOL"
+
+

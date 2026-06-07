@@ -1,0 +1,122 @@
+CREATE TABLE IF NOT EXISTS posts (
+    id SERIAL PRIMARY KEY,
+    title TEXT,
+    post_text TEXT NOT NULL,
+    topic TEXT,
+    source_materials TEXT,
+    news_context TEXT,
+    prompt TEXT,
+    gpt_response JSONB,
+    score NUMERIC(5,2)  DEFAULT 0,
+    status TEXT DEFAULT 'draft',
+    created_at TIMESTAMP DEFAULT now(),
+    approved_at TIMESTAMP,
+    published_at TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS post_sources (
+    id SERIAL PRIMARY KEY,
+    post_id INTEGER REFERENCES posts(id) ON DELETE CASCADE,
+    source_type TEXT,
+    source_url TEXT,
+    created_at TIMESTAMP DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS telegram_messages (
+    id SERIAL PRIMARY KEY,
+    post_id INTEGER REFERENCES posts(id) ON DELETE CASCADE,
+    telegram_chat_id TEXT,
+    telegram_message_id TEXT,
+    published_at TIMESTAMP DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS workflow_logs (
+    id SERIAL PRIMARY KEY,
+    workflow_name TEXT,
+    status TEXT,
+    message TEXT,
+    created_at TIMESTAMP DEFAULT now()
+);
+
+
+CREATE TABLE IF NOT EXISTS topics (
+    id SERIAL PRIMARY KEY,
+    title TEXT NOT NULL,
+    description TEXT,
+    language TEXT DEFAULT 'uk',
+    status TEXT DEFAULT 'active',
+    priority INTEGER DEFAULT 1,
+    created_at TIMESTAMP DEFAULT now(),
+    used_at TIMESTAMP
+);
+
+
+CREATE TABLE IF NOT EXISTS products (
+    id SERIAL PRIMARY KEY,
+    name TEXT NOT NULL,
+    category TEXT,
+    description TEXT,
+    created_at TIMESTAMP DEFAULT now()
+);
+
+
+
+CREATE TABLE IF NOT EXISTS product_topics (
+    product_id INTEGER REFERENCES products(id) ON DELETE CASCADE,
+    topic_id INTEGER REFERENCES topics(id) ON DELETE CASCADE,
+    created_at TIMESTAMP DEFAULT now(),
+    PRIMARY KEY (product_id, topic_id)
+);
+
+
+
+
+CREATE TABLE IF NOT EXISTS food_products (
+    id BIGSERIAL PRIMARY KEY,
+    name TEXT,
+    category TEXT,
+    calories NUMERIC,
+    proteins NUMERIC,
+    fats NUMERIC,
+    carbohydrates NUMERIC,
+    simple_sugars NUMERIC,
+    is_allowed BOOLEAN DEFAULT TRUE,
+    calories_raw TEXT,
+    proteins_raw TEXT,
+    fats_raw TEXT,
+    carbohydrates_raw TEXT
+    raw_data JSONB
+);
+
+
+
+
+CREATE TABLE IF NOT EXISTS videos (
+    id BIGSERIAL PRIMARY KEY,
+    telegram_file_id TEXT NOT NULL,
+    caption TEXT,
+    source_chat_id BIGINT,
+    source_message_id BIGINT,
+    channel_message_id BIGINT,
+    created_at TIMESTAMP DEFAULT now(),
+    channel_chat_id BIGINT,
+    published_at TIMESTAMP
+);
+
+
+CREATE TABLE IF NOT EXISTS video_topics (
+    video_id BIGINT REFERENCES videos(id) ON DELETE CASCADE,
+    topic_id INTEGER REFERENCES topics(id) ON DELETE CASCADE,
+    created_at TIMESTAMP DEFAULT now(),
+    PRIMARY KEY (video_id, topic_id)
+);
+
+
+CREATE TABLE IF NOT EXISTS video_reactions (
+    video_id BIGINT REFERENCES videos(id) ON DELETE CASCADE,
+    telegram_user_id BIGINT NOT NULL,
+    reaction TEXT NOT NULL CHECK (reaction IN ('like', 'dislike')),
+    created_at TIMESTAMP DEFAULT now(),
+    updated_at TIMESTAMP DEFAULT now(),
+    PRIMARY KEY (video_id, telegram_user_id)
+);
