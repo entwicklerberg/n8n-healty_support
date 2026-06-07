@@ -57,6 +57,7 @@ services:
       - ./data/n8n:/home/node/.n8n
       - ./files:/home/node/.n8n-files
       - ./files:/files
+      - ./workflows:/exports
 
     networks:
       - healty_network

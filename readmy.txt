@@ -1,3 +1,15 @@
+Рабочий процесс дальше
+
+После изменения workflow:
+
+docker exec -it healty_n8n n8n export:workflow --all --output=/home/node/.n8n/workflows
+docker cp healty_n8n:/home/node/.n8n/workflows ./workflows
+git add workflows sql docker-compose.yml .env.example
+git commit -m "Update n8n workflows"
+git push
+
+
+
 #Проверка
 docker compose ps
 
